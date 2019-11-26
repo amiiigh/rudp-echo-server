@@ -2,7 +2,7 @@ var rudp = require('./rudp');
 var dgram = require('dgram');
 
 var socket = dgram.createSocket('udp4');
-var echoServerAddress = 'localhost'
+var echoServerAddress = '80.240.22.240'
 var echoServerPort = 8823
 
 var connection = new rudp.Connection(new rudp.PacketSender(socket, echoServerAddress, echoServerPort));

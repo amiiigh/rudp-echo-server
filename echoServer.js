@@ -10,7 +10,7 @@ var _connections = {};
 
 socket.on('message', function (message, rinfo) {
 	try {
-		var addressKey = rinfo.address + rinfo.port;
+		var addressKey = rinfo.address + ':' + rinfo.port;
 		var connection;
 		if (!_connections[addressKey]) {
 			console.log('new connection:', addressKey)
