@@ -7,8 +7,12 @@ var echoServerPort = 8823
 
 var connection = new rudp.Connection(new rudp.PacketSender(socket, echoServerAddress, echoServerPort));
 socket.on('message', function (message, rinfo) {
-    var packet = new rudp.Packet(message);
-    connection.receive(packet);
+	try {
+		var packet = new rudp.Packet(message);
+	    connection.receive(packet);
+	} catch (err) {
+		console.log(err);
+    }
 });
 
 connection.on('data', (data) => {

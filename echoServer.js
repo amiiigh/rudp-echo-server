@@ -9,22 +9,27 @@ console.log('UDP socket bound to port 8823');
 var _connections = {};
 
 socket.on('message', function (message, rinfo) {
-	var addressKey = rinfo.address + rinfo.port;
-	var connection;
-	if (!_connections[addressKey]) {
-		console.log('new connection', addressKey)
-		connection = new rudp.Connection(new rudp.PacketSender(socket, rinfo.address, rinfo.port));
-		connection.on('data', data => {
-			let replayMessage = Buffer.from(addressKey);
-			console.log(addressKey);
-			connection.send(replayMessage)
+	try {
+		var addressKey = rinfo.address + rinfo.port;
+		var connection;
+		if (!_connections[addressKey]) {
+			console.log('new connection:', addressKey)
+			connection = new rudp.Connection(new rudp.PacketSender(socket, rinfo.address, rinfo.port));
+			connection.on('data', data => {
+				let replayMessage = Buffer.from(addressKey);
+				console.log(addressKey);
+				connection.send(replayMessage)
+			});
+			_connections[addressKey] = connection;
+		} else {
+			connection = _connections[addressKey];
+		}
+		var packet = new rudp.Packet(message);
+		setImmediate(function () {
+			connection.receive(packet);
 		});
-		_connections[addressKey] = connection;
-	} else {	  
-		connection = _connections[addressKey];
+	} catch(err) {
+		delete connection[addressKey]
+		console.log(err)
 	}
-	var packet = new rudp.Packet(message);
-	setImmediate(function () {
-		connection.receive(packet);
-	});
 });
