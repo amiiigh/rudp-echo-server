@@ -11,18 +11,25 @@ var _connections = {};
 socket.on('message', function (message, rinfo) {
 	try {
 		var addressKey = rinfo.address + ':' + rinfo.port;
-		console.log('new connection:', addressKey)
-		connection = new rudp.Connection(new rudp.PacketSender(socket, rinfo.address, rinfo.port));
-		connection.on('data', data => {
-			let replayMessage = Buffer.from(addressKey);
-			console.log(addressKey);
-			connection.send(replayMessage)
-		});
+		var connection;
+		if (!_connections[addressKey]) {
+			console.log('new connection:', addressKey)
+			connection = new rudp.Connection(new rudp.PacketSender(socket, rinfo.address, rinfo.port));
+			connection.on('data', data => {
+				let replayMessage = Buffer.from(addressKey);
+				console.log(addressKey);
+				connection.send(replayMessage)
+			});
+			_connections[addressKey] = connection;
+		} else {
+			connection = _connections[addressKey];
+		}
 		var packet = new rudp.Packet(message);
 		setImmediate(function () {
 			connection.receive(packet);
 		});
 	} catch(err) {
+		delete connection[addressKey]
 		console.log(err)
 	}
 });
