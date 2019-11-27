@@ -23,7 +23,6 @@ socket.on('message', function (message, rinfo) {
 			connection.receive(packet);
 		});
 	} catch(err) {
-		delete connection[addressKey]
 		console.log(err)
 	}
 });
