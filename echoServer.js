@@ -21,7 +21,7 @@ socket.on('message', function (message, rinfo) {
 				connection.send(replayMessage)
 			});
 			connection.on('close', () => {
-				delete connection[addressKey]
+				delete _connections[addressKey]
 			})
 			_connections[addressKey] = connection;
 		} else {
