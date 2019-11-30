@@ -20,6 +20,9 @@ socket.on('message', function (message, rinfo) {
 				console.log(addressKey);
 				connection.send(replayMessage)
 			});
+			connection.on('close', () => {
+				delete connection[addressKey]
+			})
 			_connections[addressKey] = connection;
 		} else {
 			connection = _connections[addressKey];
